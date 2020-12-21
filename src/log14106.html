@@ -11,11 +11,31 @@
   <td><b>Beschreibung</b></td>
  </tr>
  <tr>
+  <td>Benutzername</td>
   <td></td>
-  <td>0</td>
-  <td></td>
+  <td>MyRenault Benutzername / Email-Adresse</td>
  </tr>
-
+ <tr>
+  <td>Passwort</td>
+  <td></td>
+  <td>MyRenault Passwort</td>
+ </tr>
+  <tr>
+  <td>VIN</td>
+  <td></td>
+  <td>VIN des Fahrzeugs</td>
+ </tr>
+  <tr>
+  <td>Intervall [s]</td>
+  <td>0</td>
+  <td>Intervall, in dem MyRenault nach den Daten des Fahrzeugs abgefragt werden soll. Wenn der Wert 0 ist, findet <b>keine</b> periodische Abfrage statt. 
+  Ein ggf. noch laufender Zyklus wird nach Ablauf des Intervalls noch mit einer Abfrage beendet.</td>
+ </tr>
+  <tr>
+  <td>Trigger</td>
+  <td>0</td>
+  <td>Wenn der Eingang eine 1 empfängt, werden die Fahrzeugdaten von MyRenault abgefragt.</td>
+ </tr>
 </table>
 
 <h2>Ausgänge</h2>
@@ -26,10 +46,61 @@
   <td><b>Initwert</b></td>
   <td><b>Beschreibung</b></td>
  </tr>
+ <tr>
+  <td>Foto-URL</td>
   <td></td>
-  <td>0</td>
-  <td></td>
+  <td>URL zum Abruf eines Fotos des Fahrzeuges in der individuellen Konfiguration und Farbe.</td>
  </tr>
+  <tr>
+  <td>Batterie Lvl [%]</td>
+  <td>0</td>
+  <td>Ladezustand der Batterie in %</td>
+ </tr>
+  <tr>
+  <td>Restreichweite [km]</td>
+  <td>0</td>
+  <td>Reichweite mit der aktuellen Akku-Ladung in km.</td>
+ </tr>
+  <tr>
+  <td>Restladung [kWh]</td>
+  <td>0</td>
+  <td>Aktuelle Ladung der Batterie in kWh.</td>
+ </tr>
+  <tr>
+  <td>Temperatur Batterie [°C]</td>
+  <td>0</td>
+  <td>Temperatur Batterie in °C</td>
+ </tr>
+  <tr>
+  <td>Eingesteckt</td>
+  <td>0</td>
+  <td>1 wenn ein Ladekabel an das Fahrzeug angeschlossen ist, 0, wenn nicht.</td>
+ </tr>
+  <tr>
+  <td>Lädt</td>
+  <td>0</td>
+  <td>1 wenn das Fahrzeugt gerade lädt, 0, wenn nicht.</td>
+ </tr>
+  <tr>
+  <td>Gesamt km</td>
+  <td>0</td>
+  <td>Gesamte bisherige Fahrleistung des Fahrzeugs in km</td>
+ </tr>
+  <tr>
+  <td>Lat</td>
+  <td>0</td>
+  <td>Letzte gemeldete N-Position des Fahrzeugs</td>
+ </tr>
+  <tr>
+  <td>Lon</td>
+  <td>0</td>
+  <td>Letzte gemeldete E-Position des Fahrzeugs</td>
+ </tr>
+  <tr>
+  <td>Positionszeit</td>
+  <td></td>
+  <td>Zeitstempel, für den zuletzt die Fahrzeugposition empfangen wurde.</td>
+ </tr> 
 </table>
 
 <h2>Sonstiges</h2>
@@ -62,7 +133,7 @@
 
 <h3>Code</h3>
 
-Der Code des Bausteins befindet sich in der hslz Datei oder auf <a href="https://github.com/En3rGy">github</a>.
+Der Code des Bausteins befindet sich in der hslz Datei oder auf <a href="https://github.com/En3rGy/14106_Zoe">github</a>.
 
 <h3>Lizenz</h3>
 

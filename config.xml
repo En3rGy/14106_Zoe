@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+    <modules>
+        <module category="Datenaustausch" context="hsl20_3_json" id="14106" name="Zoe (14106)" version="0.1">
+            <inputs>
+            	<input type="string" const_name="s_user" init_value="">Benutzername</input>
+            	<input type="string" const_name="s_pw" init_value="">Passwort</input>
+				<input type="string" const_name="s_vin" init_value="">VIN</input>
+				<input type="number" const_name="n_interval" init_value="0">Intervall [s]</input>
+				<input type="number" const_name="n_trigger" init_value="0">Trigger</input>
+            </inputs>
+            <outputs>
+				<output type="string" const_name="s_carpicture" init_value="">Foto-URL</output>
+				<output type="number" const_name="n_batteryLevel" init_value="0">Batterie Lvl [%]</output>
+				<output type="number" const_name="n_batteryAutonomy" init_value="0">Restreichweite [km]</output>
+				<output type="number" const_name="n_batteryAvailableEnergy" init_value="0">Restladung [kWh]</output>
+				<output type="number" const_name="n_batteryTemperature" init_value="0">Temperatur Batterie [°C]</output>				
+				<output type="number" const_name="n_plugStatus" init_value="0">Eingesteckt</output>
+				<output type="number" const_name="n_chargeStatus" init_value="0">Lädt</output>
+				<output type="number" const_name="n_totalMileage" init_value="0">Gesamt km</output>
+				<output type="number" const_name="n_gpsLatitude" init_value="0">Lat</output>
+				<output type="number" const_name="n_gpsLongitude" init_value="0">Lon</output>
+				<output type="string" const_name="s_LastUpdateTime" init_value="">Positionszeit</output>				
+            </outputs>               
+			<remanent_variables>
+            </remanent_variables>
+            <imports>
+            </imports>		
+        </module>			
+    </modules>
+</config>
+                 

@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
     <modules>
-        <module category="Datenaustausch" context="hsl20_3_json" id="14106" name="Zoe (14106)" version="0.1">
+        <module category="Datenaustausch" context="hsl20_3_json" id="14106" name="Zoe (14106)" version="0.2">
             <inputs>
             	<input type="string" const_name="s_user" init_value="">Benutzername</input>
             	<input type="string" const_name="s_pw" init_value="">Passwort</input>
 				<input type="string" const_name="s_vin" init_value="">VIN</input>
 				<input type="number" const_name="n_interval" init_value="0">Intervall [s]</input>
 				<input type="number" const_name="n_trigger" init_value="0">Trigger</input>
+				<input type="number" const_name="n_ac" init_value="0">Klimatisierung E/A</input>
+				<input type="number" const_name="n_charge" init_value="0">Laden Start</input>
             </inputs>
             <outputs>
 				<output type="string" const_name="s_carpicture" init_value="">Foto-URL</output>
@@ -20,7 +22,8 @@
 				<output type="number" const_name="n_totalMileage" init_value="0">Gesamt km</output>
 				<output type="number" const_name="n_gpsLatitude" init_value="0">Lat</output>
 				<output type="number" const_name="n_gpsLongitude" init_value="0">Lon</output>
-				<output type="string" const_name="s_LastUpdateTime" init_value="">Positionszeit</output>				
+				<output type="string" const_name="s_LastUpdateTime" init_value="">Positionszeit</output>
+				<output type="number" const_name="n_acfeedback" init_value="0">Query RM</output>
             </outputs>               
 			<remanent_variables>
             </remanent_variables>

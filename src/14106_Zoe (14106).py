@@ -1,15 +1,10 @@
 # coding: UTF-8
 
-#import re
 import urllib
 import urllib2
 import ssl
 import urlparse
-import socket
-import struct
-#import hashlib
 import threading
-#import time
 from datetime import datetime
 import json
 
@@ -29,6 +24,8 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
         self.PIN_I_S_VIN=3
         self.PIN_I_N_INTERVAL=4
         self.PIN_I_N_TRIGGER=5
+        self.PIN_I_N_AC=6
+        self.PIN_I_N_CHARGE=7
         self.PIN_O_S_CARPICTURE=1
         self.PIN_O_N_BATTERYLEVEL=2
         self.PIN_O_N_BATTERYAUTONOMY=3
@@ -40,6 +37,7 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
         self.PIN_O_N_GPSLATITUDE=9
         self.PIN_O_N_GPSLONGITUDE=10
         self.PIN_O_S_LASTUPDATETIME=11
+        self.PIN_O_N_ACFEEDBACK=12
         self.FRAMEWORK._run_in_context_thread(self.on_init)
 
 ########################################################################################################
@@ -69,9 +67,6 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
 
 
     def clearKeychain(self):
-        if('VIN' in self.g_keychain):
-            del self.g_keychain['VIN']
-
         if('account_id' in self.g_keychain):
             del self.g_keychain['account_id']
         if('gigyaJWTToken' in self.g_keychain):
@@ -82,9 +77,6 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
             del self.g_keychain['gigyaPersonID']
         if('gigyaGigyaDataCenter' in self.g_keychain):
             del self.g_keychain['gigyaGigyaDataCenter']
-        #if(Keychain.contains('carPicture')) { Keychain.remove('carPicture') } // enable if picture is wrong
-
-        print("Cleared Key Chain")
 
 
     def getDate(self):
@@ -101,47 +93,42 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
         self.clearKeychain()
 
 
-    def getHttpsResponse(self, p_url, p_path, p_headers, p_data):
-
+    def getHttpsResponse(self, p_url, p_path, p_headers = "", p_data = ""):
         url = p_url + p_path
-        url_parsed = urlparse.urlparse(url)
-
+        resp = {"data" : "", "code" : 418}
         # Build a SSL Context to disable certificate verification.
         ctx = ssl._create_unverified_context()
-        response_data = ""
-
-        #headers={'Host': url_parsed.hostname}
-        #data= ("")
 
         try:
-            # Build a http request and overwrite host header with the original hostname.
             if (p_headers == ""):
-                request = urllib2.Request(url)#, data=p_data, headers=p_headers)
-            elif (p_headers != ""):
+                request = urllib2.Request(url)
+            elif (p_headers != "" and p_data == ""):
                 request = urllib2.Request(url, headers=p_headers)
             else:
                 request = urllib2.Request(url, data=p_data, headers=p_headers)
 
             # Open the URL and read the response.
             response = urllib2.urlopen(request, timeout=3, context=ctx)
-            response_data = response.read()
+            resp = {"data" : response.read(), "code" : response.getcode()}
+            if(resp["code"] != 200):
+                print("Http status code " + str(resp["code"]) + " while accessing " + response.url())
+        except urllib2.HTTPError as e:
+            resp["code"] = e.code
+            self.DEBUG.add_message("14106 getHttpsResponse: " + str(e))
         except Exception as e:
-            #self.DEBUG.set_value("14102 Error", "getSecurityPort: " + str(e))
             self.DEBUG.add_message("14106 getHttpsResponse: " + str(e))
 
-        return response_data
+        return resp
 
 
     def getStatus(self, endpoint, version, kamareonURL, account_id, VIN, gigyaJWTToken, kamareonAPI):
         # fetch data from kamereon (single vehicle)
         path = '/commerce/v1/accounts/' + account_id + '/kamereon/kca/car-adapter/v' + str(version) + '/cars/' + VIN + '/' + endpoint + '?country=DE'
         headers = { "x-gigya-id_token": gigyaJWTToken, "apikey": kamareonAPI, "Content-type": "application/vnd.api+json" }
-        apiResult = ""
+        apiResult = self.getHttpsResponse(self.g_kamareonURL, path, headers)
 
         try:
-            apiResult = self.getHttpsResponse(self.g_kamareonURL, path, headers, "")
-            apiResult = json.loads(apiResult)
-
+            apiResult = json.loads(apiResult["data"])
         except Exception as e:
             self.DEBUG.add_message("14106 getStatus: " + str(e))
 
@@ -155,19 +142,21 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
                                                       'apiKey' : self.g_gigyaAPI})
 
         try:
-            apiResult = self.getHttpsResponse( self.g_gigyaURL, path, "", "")
+            apiResult = self.getHttpsResponse( self.g_gigyaURL, path)
+            statusCode = apiResult["code"]
+            apiResult = apiResult["data"]
             apiResult = json.loads(apiResult)
     
-            if( apiResult["statusCode"] == "403"):
+            if( statusCode == "403"):
                 print("Login nicht möglich. Zugangsdaten prüfen.")
     
             else:
                 gigyaCookieValue = apiResult["sessionInfo"]["cookieValue"]
                 self.g_keychain['gigyaCookieValue'] = gigyaCookieValue
-                self.DEBUG.set_value("14106 gigyaCookieValue", gigyaCookieValue)
+                self.DEBUG.set_value("14106 gigyaCookieValue: ", gigyaCookieValue)
 
         except Exception as e:
-            self.DEBUG.add_message("14106 getGigyaCookieValue: " + str(e))
+            self.DEBUG.add_message("14106 getGigyaCookieValue (Exception): " + str(e))
 
 
     # 2. fetch user data from gigya
@@ -184,7 +173,8 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
         if(gigyaPersonID == "" or gigyaGigyaDataCenter == ""):
             path = '/accounts.getAccountInfo?' + urllib.urlencode({'oauth_token' : self.g_keychain['gigyaCookieValue']})
 
-            apiResult = self.getHttpsResponse( self.g_gigyaURL, path, "", "")
+            apiResult = self.getHttpsResponse( self.g_gigyaURL, path)
+            apiResult = apiResult["data"]
             apiResult = json.loads(apiResult)
 
             gigyaPersonID = apiResult["data"]["personId"]
@@ -215,7 +205,8 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
                                                            'fields' : 'data.personId,data.gigyaDataCenter',
                                                            'ApiKey' : self.g_gigyaAPI})
 
-            apiResult = self.getHttpsResponse( self.g_gigyaURL, path, "", "")
+            apiResult = self.getHttpsResponse( self.g_gigyaURL, path)
+            apiResult = apiResult["data"]
             apiResult = json.loads(apiResult)
             
             gigyaJWTToken = apiResult["id_token"]
@@ -251,7 +242,8 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
 
             headers = {"x-gigya-id_token" : gigyaJWTToken, "apikey" : self.g_kamareonAPI}
 
-            apiResult = self.getHttpsResponse(self.g_kamareonURL, path, headers, "")
+            apiResult = self.getHttpsResponse(self.g_kamareonURL, path, headers)
+            apiResult = apiResult["data"]
             apiResult = json.loads(apiResult)
 
             if(apiResult["type"] == "FUNCTIONAL"):
@@ -274,12 +266,14 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
         if( "VIN" in self.g_keychain):
             VIN = self.g_keychain['VIN']
 
-        if ( "account_id" not in self.g_keychain):
+        if ("account_id" not in self.g_keychain):
+            print("fetchVehicleData: account_id missing")
             return
 
         account_id = self.g_keychain['account_id']
 
         if (account_id == ""):
+            print("fetchVehicleData: account_id empty")
             return
 
         if(carPicture == "" or VIN == ""):
@@ -289,13 +283,14 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
             headers = {"x-gigya-id_token" : gigyaJWTToken, "apikey" : self.g_kamareonAPI}
 
             try:
-                apiResult = self.getHttpsResponse(self.g_kamareonURL, path, headers, "")
+                apiResult = self.getHttpsResponse(self.g_kamareonURL, path, headers)
+                apiResult = apiResult["data"]
                 apiResult = json.loads(apiResult)
 
                 # set carPicture
                 carPicture = apiResult["vehicleLinks"][0]["vehicleDetails"]["assets"][0]["renditions"][0]["url"]
                 self.g_keychain['carPicture'] = carPicture
-                print('carPicture (new): ' + carPicture)
+                self.DEBUG.set_value("14106 carPicture", carPicture)
 
                 # set VIN
                 VIN = apiResult["vehicleLinks"][0]["vin"]
@@ -322,8 +317,7 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
         # chargeStatus = bolean (0/1) (?)
         try:
             batteryStatus = self.getStatus('battery-status', 2, self.g_kamareonURL, account_id, VIN, gigyaJWTToken, self.g_kamareonAPI)
-            allResults["batteryStatus"] = batteryStatus
-            print("batteryStatus: " + str(batteryStatus))
+            allResults["batteryStatus"] = batteryStatus["data"]
             self._set_output_value(self.PIN_O_N_BATTERYLEVEL, int(batteryStatus["data"]["attributes"]["batteryLevel"]))
             self._set_output_value(self.PIN_O_N_PLUGSTATUS, int(batteryStatus["data"]["attributes"]["plugStatus"]))
             self._set_output_value(self.PIN_O_N_CHARGESTATUS, int(batteryStatus["data"]["attributes"]["chargingStatus"]))
@@ -338,8 +332,7 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
         #  totalMileage = Num (in Kilometres!)
         try:
             cockpitStatus = self.getStatus('cockpit', 2, self.g_kamareonURL, account_id, VIN, gigyaJWTToken, self.g_kamareonAPI)
-            allResults["cockpitStatus"] = cockpitStatus
-            print("cockpitStatus: " + str(cockpitStatus))
+            allResults["cockpitStatus"] = cockpitStatus["data"]
             self._set_output_value(self.PIN_O_N_TOTALMILEAGE, int(cockpitStatus["data"]["attributes"]["totalMileage"]))
         except Exception as e:
             self.DEBUG.add_message("14106 cockpitStatus: " + str(e))
@@ -351,8 +344,7 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
         # LastUpdateTime
         try:
             locationStatus = self.getStatus('location', 1, self.g_kamareonURL, account_id, VIN, gigyaJWTToken, self.g_kamareonAPI)
-            allResults["locationStatus"] = locationStatus
-            print("locationStatus: " + str(locationStatus))
+            allResults["locationStatus"] = locationStatus["data"]
             self._set_output_value(self.PIN_O_N_GPSLATITUDE, int(locationStatus["data"]["attributes"]["gpsLatitude"]))
             self._set_output_value(self.PIN_O_N_GPSLONGITUDE, int(locationStatus["data"]["attributes"]["gpsLongitude"]))
             self._set_output_value(self.PIN_O_S_LASTUPDATETIME, str(locationStatus["data"]["attributes"]["lastUpdateTime"]))
@@ -364,59 +356,88 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
         ## version: 1
         #try:
         #    chargeSchedule = self.getStatus('charging-settings', 1, self.g_kamareonURL, account_id, VIN, gigyaJWTToken, self.g_kamareonAPI)
-        #    allResults["chargeSchedule"] = chargeSchedule
-        #    print('chargeSchedule: ' + str(chargeSchedule))
+        #    allResults["chargeSchedule"] = chargeSchedule["data"]
         #except Exception as e:
-        #    pass
+        #    self.DEBUG.add_message("14106 chargeSchedule: " + str(e))
 
         ## hvacStatus
         ## version: 1
         #try:
         #    hvacStatus = self.getStatus('hvac-status', 1, self.g_kamareonURL, account_id, VIN, gigyaJWTToken, self.g_kamareonAPI)
-        #    allResults["hvacStatus"] = hvacStatus
+        #    allResults["hvacStatus"] = hvacStatus["data"]
         #    print('hvacStatus: ' + str(hvacStatus))
+        #    #self._set_output_value(self.PIN_O_S_LASTUPDATETIME, str(locationStatus["data"]["attributes"]["lastUpdateTime"]))
         #except Exception as e:
-        #    print ('hvacStatus: ' + str(e))
+        #    self.DEBUG.add_message("14106 hvacStatus: " + str(e))
 
 
-        # query parameter / args 
-        # if query action = "start_ac" we start "vorklimatisierung"
-        # default temperature will be 21°C
-        
-        ##########
-        #let query_action = args.queryParameters.action
-        
-        #if( query_action == "start_ac" ){
-        #    let attr_data = '{"data":{"type":"HvacStart","attributes":{"action":"start","targetTemperature":"21"}}}'
-        #    let action = await postStatus('hvac-start', attr_data.toString(), 1, kamareonURL, account_id, VIN, gigyaJWTToken, kamareonAPI)
-        #    console.log("start_ac_action: " + action)
-        #    //throw new Error(action)
-        #}
-        
-        #if( query_action == "stop_ac" ){
-        #    let attr_data = '{"data":{"type":"HvacStart","attributes":{"action":"cancel"}}}'
-        #    let action = await postStatus('hvac-start', attr_data.toString(), 1, kamareonURL, account_id, VIN, gigyaJWTToken, kamareonAPI)
-        #    console.log("stop_ac_action: " + action)
-        #}
-        
-        #if( query_action == "start_charge" ){
-        #    let attr_data = '{"data":{"type":"ChargingStart","attributes":{"action":"start"}}}'
-        #    let action = await postStatus('charging-start', attr_data.toString(), 1, kamareonURL, account_id, VIN, gigyaJWTToken, kamareonAPI)
-        #    console.log("start_charge_action: " + action)
-        #}
+    # general function to POST status-values to our vehicle
+    def postStatus(self, endpoint, jsondata, version, kamareonURL, account_id, VIN, gigyaJWTToken, kamareonAPI ):
+        path = '/commerce/v1/accounts/' + account_id + '/kamereon/kca/car-adapter/v' + str(version) + '/cars/' + VIN + '/actions/' + endpoint + '?country=DE'
+        headers = { "x-gigya-id_token": gigyaJWTToken, "apikey": kamareonAPI, "Content-type": "application/vnd.api+json" }
+        apiResult = self.getHttpsResponse(kamareonURL, path, headers, jsondata)
+        return apiResult
 
 
-    def onTimeout(self):
-        try:
+    def query(self, query_action):
+        self.clearKeychain()
+        self.getAccessData()
+        action={}
+        
+        print("requesting " + query_action)
+
+        if ((self.g_VIN == 0) or
+            ("account_id" not in self.g_keychain) or
+            ("gigyaJWTToken" not in self.g_keychain)):
+            print("Required values not in keychain!")
+            return
+
+        VIN = self.g_VIN
+        account_id = self.g_keychain['account_id']
+        gigyaJWTToken = self.g_keychain["gigyaJWTToken"]
+
+        if( query_action == "start_ac" ):
+            attr_data = ('{"data":{"type":"HvacStart","attributes":{"action":"start","targetTemperature":"21"}}}')
+            action = self.postStatus('hvac-start', attr_data, 1, self.g_kamareonURL, account_id, VIN, gigyaJWTToken, self.g_kamareonAPI)
+            if(action["code"] == 200):
+                self._set_output_value(self.PIN_O_N_ACFEEDBACK, 1)
+            else:
+                self._set_output_value(self.PIN_O_N_ACFEEDBACK, 0)
+        elif( query_action == "stop_ac" ):
+            attr_data = ('{"data":{"type":"HvacStart","attributes":{"action":"cancel"}}}')
+            action = self.postStatus('hvac-start', attr_data, 1, self.g_kamareonURL, account_id, VIN, gigyaJWTToken, self.g_kamareonAPI)
+            if(action["code"] == 200):
+                self._set_output_value(self.PIN_O_N_ACFEEDBACK, 1)
+            else:
+                self._set_output_value(self.PIN_O_N_ACFEEDBACK, 0)
+        elif( query_action == "start_charge" ):
+            attr_data = ('{"data":{"type":"ChargingStart","attributes":{"action":"start"}}}')
+            action = self.postStatus('charging-start', attr_data, 1, self.g_kamareonURL, account_id, VIN, gigyaJWTToken, self.g_kamareonAPI)
+        else:
+            print("Query command not known")
+
+        if(action["code"] == 200):
+            self.DEBUG.add_message("14106 query: " + query_action + " OK")
+        else:
+            self.DEBUG.add_message("14106 query: " + query_action + " nOK, code was " + str(action["code"]))
+
+
+    def getAccessData(self):
             self.getGigyaCookieValue()
             self.getGigyaUserDate()
             self.fetchJwtData()
             self.fetchKamereonData()
+
+
+    def onTimeout(self):
+        try:
+            self.getAccessData()
             self.fetchVehicleData()
-        except Exception as e:
+        except:
             pass
         
-        nInterval = self._get_input_value(self.PIN_I_N_INTERVAL)
+        nInterval = int(self._get_input_value(self.PIN_I_N_INTERVAL))
+        print("nInterval = " + str(nInterval))
         if (nInterval > 0):
             t = threading.Timer(nInterval, self.onTimeout).start()
 
@@ -428,13 +449,13 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
         self.g_myRenaultPass = self._get_input_value(self.PIN_I_S_PW)
         self.g_VIN = self._get_input_value(self.PIN_I_S_VIN)
 
-        nInterval = self._get_input_value(self.PIN_I_N_INTERVAL)
+        nInterval = int(self._get_input_value(self.PIN_I_N_INTERVAL))
         if (nInterval > 0):
             self.onTimeout()
 
 
     def on_input_value(self, index, value):
-        if(index == self.PIN_I_N_TRIGGER and value):
+        if(index == self.PIN_I_N_TRIGGER and value != 0):
             self.onTimeout()
 
         if(index == self.PIN_I_S_USER):
@@ -444,7 +465,14 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
         if(index == self.PIN_I_S_VIN):
             self.g_VIN = value
 
+        if(index == self.PIN_I_N_AC):
+            if(value == 0):
+                self.query("stop_ac")
+            else:
+                self.query("start_ac")
+        if(index == self.PIN_I_N_CHARGE):
+            self.query("start_charge")
+
         if(index == self.PIN_I_N_INTERVAL):
             if (value > 0):
                 self.onTimeout()
-

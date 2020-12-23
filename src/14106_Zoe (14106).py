@@ -271,13 +271,13 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
             return
 
         account_id = self.g_keychain['account_id']
+        gigyaJWTToken = self.g_keychain["gigyaJWTToken"]
 
         if (account_id == ""):
             print("fetchVehicleData: account_id empty")
             return
 
         if(carPicture == "" or VIN == ""):
-            gigyaJWTToken = self.g_keychain["gigyaJWTToken"]
 
             path = '/commerce/v1/accounts/' + account_id + '/vehicles?country=DE'
             headers = {"x-gigya-id_token" : gigyaJWTToken, "apikey" : self.g_kamareonAPI}

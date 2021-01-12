@@ -16,7 +16,7 @@ import json
 class Zoe_14106_14106(hsl20_3.BaseModule):
 
     def __init__(self, homeserver_context):
-        hsl20_3.BaseModule.__init__(self, homeserver_context, "hsl20_3_json")
+        hsl20_3.BaseModule.__init__(self, homeserver_context, "14106_Zoe")
         self.FRAMEWORK = self._get_framework()
         self.LOGGER = self._get_logger(hsl20_3.LOGGING_NONE,())
         self.PIN_I_S_USER=1
@@ -25,7 +25,8 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
         self.PIN_I_N_INTERVAL=4
         self.PIN_I_N_TRIGGER=5
         self.PIN_I_N_AC=6
-        self.PIN_I_N_CHARGE=7
+        self.PIN_I_N_ACTEMP=7
+        self.PIN_I_N_CHARGE=8
         self.PIN_O_S_CARPICTURE=1
         self.PIN_O_N_BATTERYLEVEL=2
         self.PIN_O_N_BATTERYAUTONOMY=3
@@ -397,7 +398,8 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
         gigyaJWTToken = self.g_keychain["gigyaJWTToken"]
 
         if( query_action == "start_ac" ):
-            attr_data = ('{"data":{"type":"HvacStart","attributes":{"action":"start","targetTemperature":"21"}}}')
+            temp = int(self._get_input_value(self.PIN_I_N_ACTEMP))
+            attr_data = ('{"data":{"type":"HvacStart","attributes":{"action":"start","targetTemperature":"' + str(temp) + '"}}}')
             action = self.postStatus('hvac-start', attr_data, 1, self.g_kamareonURL, account_id, VIN, gigyaJWTToken, self.g_kamareonAPI)
             if(action["code"] == 200):
                 self._set_output_value(self.PIN_O_N_ACFEEDBACK, 1)

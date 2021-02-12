@@ -1,8 +1,8 @@
 # Zoe (14106)
-Logic module to communicate with Renault Zoe für Gira KNX Homeserver. Derived from zoe-widget.js, see https://gist.github.com/mountbatt/772e4512089802a2aa2622058dd1ded7
+Logikmodul zur Kommunikation mit einer Renault Zoe für den Gira KNX Homeserver. Abgeleitet vom [zoe-widget.js](https://gist.github.com/mountbatt/772e4512089802a2aa2622058dd1ded7)
 
-## Install
-Load .hslz file with Gira Experte SW. The logic modul is placed in the folder "Datenaustausch".
+## Installation
+Die .hslz Datei mit dem Gira Experte importieren. Das Logikmodul ist dann in der Rubrik "Datenaustausch" verfügbar.
 
 ## Eingänge
 
@@ -36,10 +36,14 @@ Load .hslz file with Gira Experte SW. The logic modul is placed in the folder "D
 
 - Neuberechnung beim Start: Nein
 - Baustein ist remanent: Nein
+- Interne Bezeichnung: 14106
 
 ### Change Log
 
-- v0.3
+- v0.6
+    - Fix: Aktualisierte Einwahldaten
+- v0.5
+- v0.4
     - Temperatur der Vorklimatisierung als Eingangsgröße
 - v0.3
     - Fix: local variable 'gigyaJWTToken' referenced before assignment

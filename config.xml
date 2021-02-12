@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
     <modules>
-        <module category="Datenaustausch" context="14106_Zoe" id="14106" name="Zoe (14106)" version="0.5">
+        <module category="Datenaustausch" context="14106_Zoe" id="14106" name="Zoe (14106)" version="0.6">
             <inputs>
             	<input type="string" const_name="s_user" init_value="">Benutzername</input>
             	<input type="string" const_name="s_pw" init_value="">Passwort</input>

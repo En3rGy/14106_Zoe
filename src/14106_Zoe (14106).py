@@ -60,7 +60,7 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
 
     # do not edit
     g_kamareonURL = "https://api-wired-prod-1-euw1.wrd-aws.com"
-    g_kamareonAPI = "oF09WnKqvBDcrQzcW1rJNpjIuy7KdGaB"
+    g_kamareonAPI = "Ae9FDWugRxZQAGm3Sxgk7uJn6Q4CGEA2"
     g_gigyaURL = "https://accounts.eu1.gigya.com"
     g_gigyaAPI = "3_7PLksOyBRkHv126x5WhHb-5pqC1qFR8pQjxSeLB6nhAnPERTUlwnYoznHSxwX668" # austria: "3__B4KghyeUb0GlpU62ZXKrjSfb7CPzwBS368wioftJUL5qXE0Z_sSy0rX69klXuHy"
 

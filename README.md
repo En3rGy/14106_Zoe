@@ -11,8 +11,7 @@ Load .hslz file with Gira Experte SW. The logic modul is placed in the folder "D
 | Benutzername | | MyRenault Benutzername / Email-Adresse |
 | Passwort | | MyRenault Passwort 
 | VIN | | VIN des Fahrzeugs |
-| Intervall [s] | 0 | Intervall, in dem MyRenault nach den Daten des Fahrzeugs abgefragt werden soll. Wenn der Wert 0 ist, findet *keine* periodische Abfrage statt. 
-  Ein ggf. noch laufender Zyklus wird nach Ablauf des Intervalls noch mit einer Abfrage beendet. |
+| Intervall [s] | 0 | Intervall, in dem MyRenault nach den Daten des Fahrzeugs abgefragt werden soll. Wenn der Wert 0 ist, findet *keine* periodische Abfrage statt.<br>Ein ggf. noch laufender Zyklus wird nach Ablauf des Intervalls noch mit einer Abfrage beendet. |
 | Trigger | 0 | Wenn der Eingang eine 1 empfängt, werden die Fahrzeugdaten von MyRenault abgefragt. | 
 | Klimatisierung E/A | 0 | Eine 1 am Eingang startet die Klimatisierung, eine 0 beendet sie. |
 | Laden Start | 0 | Eine 1 startet den Ladevorgang. |
@@ -51,7 +50,7 @@ Load .hslz file with Gira Experte SW. The logic modul is placed in the folder "D
     - Initial
 
 ### Open Issues / Known Bugs
-- -
+-
 
 ### Support
 
@@ -71,15 +70,15 @@ Der Code des Bausteins befindet sich in der hslz Datei oder auf [github](https:/
 
 ## Anforderungen
 
-- - 
+-
 
 ## Software Design Description
 
-- - 
+-
 
 ## Validierung und Verifikation
 
-- -
+-
 
 ## Lizenz
 

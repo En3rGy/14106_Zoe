@@ -45,18 +45,18 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
 #### Own written code can be placed after this commentblock . Do not change or delete commentblock! ####
 ###################################################################################################!!!##
 
+    g_myRenaultUser = "tobias@paul-family.de"  # type: str
+    g_myRenaultPass = "BRgdPa!1"  # type: str
 
-    g_myRenaultUser = ""     # email
-    g_myRenaultPass = ""     # password
+    # set your ZOE Model (Phase 1 or 2)
+    g_ZOE_Phase = "2"  # "1" or "2"
 
-    # set your ZOE Model (Phase 1 or 2) // bitte eingeben!
-    g_ZOE_Phase = "2" # "1" or "2"
-
-    # optional: 
+    # optional:
     # enter your VIN / FIN if you have more than 1 vehicle in your account
     # or if you get any login-errors
     # leave it blank to auto-select it
-    g_VIN = "" # starts with VF1... enter like this: "VF1XXXXXXXXX"
+    # starts with VF1... enter like this: "VF1XXXXXXXXX"
+    g_VIN = "VF1AG000366588268"  # type: str
 
     # do not edit
     g_kamareonURL = "https://api-wired-prod-1-euw1.wrd-aws.com"  # type: str
@@ -97,24 +97,18 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
         # Build a SSL Context to disable certificate verification.
         ctx = ssl._create_unverified_context()
 
-        try:
-            if p_headers == "":
-                request = urllib2.Request(url)
-            elif p_headers != "" and p_data == "":
-                request = urllib2.Request(url, headers=p_headers)
-            else:
-                request = urllib2.Request(url, data=p_data, headers=p_headers)
+        if p_headers == "":
+            request = urllib2.Request(url)
+        elif p_headers != "" and p_data == "":
+            request = urllib2.Request(url, headers=p_headers)
+        else:
+            request = urllib2.Request(url, data=p_data, headers=p_headers)
 
-            # Open the URL and read the response.
-            response = urllib2.urlopen(request, timeout=3, context=ctx)
-            resp = {"data": response.read(), "code": response.getcode()}
-            if resp["code"] != 200:
-                print("Http status code " + str(resp["code"]) + " while accessing " + response.url())
-        except urllib2.HTTPError as e:
-            resp["code"] = e.code
-            self.DEBUG.add_message("14106 getHttpsResponse: (urllib2) " + str(e))
-        except Exception as e:
-            self.DEBUG.add_message("14106 getHttpsResponse: " + str(e))
+        # Open the URL and read the response.
+        response = urllib2.urlopen(request, timeout=3, context=ctx)
+        resp = {"data": response.read(), "code": response.getcode()}
+        if resp["code"] != 200:
+            print("Http status code " + str(resp["code"]) + " while accessing " + response.url())
 
         return resp
 
@@ -400,17 +394,18 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
 
         # hvacStatus
         # version: 1
-        try:
-            hvac_status = self.get_status('hvac-status', 1, self.g_kamareonURL, account_id, VIN, gigya_jwt_token,
-                                         self.g_kamareonAPI)
-            if "data" in hvac_status:
-                all_results["hvacStatus"] = hvac_status["data"]
-                print('hvacStatus: ' + str(hvac_status))
-        except Exception as e:
-            self.DEBUG.add_message("14106 hvacStatus: " + str(e))
+        # try:
+        #    hvac_status = self.get_status('hvac-status', 1, self.g_kamareonURL, account_id, VIN, gigya_jwt_token,
+        #                                 self.g_kamareonAPI)
+        #    if "data" in hvac_status:
+        #        all_results["hvacStatus"] = hvac_status["data"]
+        #        print('hvacStatus: ' + str(hvac_status))
+        # except Exception as e:
+        #    self.DEBUG.add_message("14106 hvacStatus: " + str(e))
 
     # general function to POST status-values to our vehicle
     def post_status(self, endpoint, jsondata, version, kamareonURL, account_id, VIN, gigyaJWTToken, kamareonAPI):
+
         path = '/commerce/v1/accounts/' + account_id + '/kamereon/kca/car-adapter/v' + str(
             version) + '/cars/' + VIN + '/actions/' + endpoint + '?country=DE'
         headers = {"x-gigya-id_token": gigyaJWTToken, "apikey": kamareonAPI, "Content-type": "application/vnd.api+json"}
@@ -487,13 +482,19 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
         if index == self.PIN_I_N_TRIGGER and value:
             self.on_timeout()
 
-        if index == self.PIN_I_S_USER:
+        elif index == self.PIN_I_S_USER:
             self.g_myRenaultUser = value
-        if index == self.PIN_I_S_PW:
+        elif index == self.PIN_I_S_PW:
             self.g_myRenaultPass = value
-        if index == self.PIN_I_S_VIN:
+        elif index == self.PIN_I_S_VIN:
             self.g_VIN = value
-
-        if index == self.PIN_I_N_INTERVAL:
+        elif index == self.PIN_I_N_AC:
+            if value == 0:
+                self.query("stop_ac")
+            else:
+                self.query("start_ac")
+        elif index == self.PIN_I_N_CHARGE:
+            self.query("start_charge")
+        elif index == self.PIN_I_N_INTERVAL:
             if value > 0:
                 self.on_timeout()

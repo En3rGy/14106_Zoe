@@ -54,7 +54,9 @@ Die .hslz Datei mit dem Gira Experte importieren. Das Logikmodul ist dann in der
     - Initial
 
 ### Open Issues / Known Bugs
--
+
+- [Vorklimatiierung Ende scheint nicht zu funktionieren, tbc](https://github.com/En3rGy/14106_Zoe/issues/2)
+- [Einstellung der Temperatur der Vorklimatiisierung scheint nicht zu funktionieren, tbc](https://github.com/En3rGy/14106_Zoe/issues/3)
 
 ### Support
 

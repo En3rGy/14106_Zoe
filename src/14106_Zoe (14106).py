@@ -45,8 +45,8 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
 #### Own written code can be placed after this commentblock . Do not change or delete commentblock! ####
 ###################################################################################################!!!##
 
-    g_myRenaultUser = "tobias@paul-family.de"  # type: str
-    g_myRenaultPass = "BRgdPa!1"  # type: str
+    g_myRenaultUser = ""  # type: str
+    g_myRenaultPass = ""  # type: str
 
     # set your ZOE Model (Phase 1 or 2)
     g_ZOE_Phase = "2"  # "1" or "2"
@@ -56,7 +56,7 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
     # or if you get any login-errors
     # leave it blank to auto-select it
     # starts with VF1... enter like this: "VF1XXXXXXXXX"
-    g_VIN = "VF1AG000366588268"  # type: str
+    g_VIN = ""  # type: str
 
     # do not edit
     g_kamareonURL = "https://api-wired-prod-1-euw1.wrd-aws.com"  # type: str
@@ -121,7 +121,7 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
         status_code = api_result["code"]
         api_result = api_result["data"]
 
-        print("x. " + endpoint + " status: " + str(status_code))
+        # print("x. " + endpoint + " status: " + str(status_code))
 
         if status_code == 200:
             try:
@@ -145,26 +145,26 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
             api_result = api_result["data"]
             api_result = json.loads(api_result)
 
-            print("1. status code: " + str(status_code))
+            # print("1. status code: " + str(status_code))
 
             if status_code == "403":
-                print("Login nicht möglich. Zugangsdaten prüfen.")
+                self.DEBUG.add_message("Login nicht möglich. Zugangsdaten prüfen.")
             else:
                 gigya_cookie_value = api_result["sessionInfo"]["cookieValue"]
                 self.g_keychain['gigyaCookieValue'] = gigya_cookie_value
-                self.DEBUG.set_value("14106 gigyaCookieValue: ", gigya_cookie_value)
+                self.DEBUG.add_message("Received gigyaCookieValue")
 
                 api_result = api_result['data']
                 person_id = api_result["personId"]
                 self.g_keychain['gigyaPersonID'] = person_id
-                self.DEBUG.set_value("14106 gigyaPersonId: ", person_id)
+                self.DEBUG.add_message("Received gigyaPersonId")
 
                 gigya_data_center = api_result['gigyaDataCenter']
                 self.g_keychain['gigyaDataCenter'] = gigya_data_center
-                self.DEBUG.set_value("14106 gigyaDataCenter: ", gigya_data_center)
+                self.DEBUG.add_message("Received gigyaDataCenter")
 
         except Exception as e:
-            self.DEBUG.add_message("14106 getGigyaCookieValue (Exception): " + str(e))
+            self.DEBUG.add_message("getGigyaCookieValue (Exception): " + str(e))
 
     # 2. fetch user data from gigya
     def get_gigya_user_date(self):
@@ -178,24 +178,24 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
             gigya_gigya_data_center = self.g_keychain['gigyaDataCenter']
 
         if gigya_person_id == "" or gigya_gigya_data_center == "":
-            print ("a")
             path = '/accounts.getAccountInfo?' + urllib.urlencode({'oauth_token': self.g_keychain['gigyaCookieValue']})
             api_result = self.get_https_response(self.g_gigyaURL, path)
             status_code = api_result["code"]
             api_result = api_result["data"]
             api_result = json.loads(api_result)
 
-            print("2. status code: " + str(status_code))
+            # print("2. status code: " + str(status_code))
 
             gigya_person_id = api_result["data"]["personId"]
             gigya_gigya_data_center = api_result["data"]["gigyaDataCenter"]
             self.g_keychain['gigyaPersonID'] = gigya_person_id
             self.g_keychain['gigyaDataCenter'] = gigya_gigya_data_center
-            self.DEBUG.set_value("14106 gigyaPersonID", self.g_keychain['gigyaPersonID'])
-            self.DEBUG.set_value("14106 gigyaDataCenter", self.g_keychain['gigyaDataCenter'])
+            self.DEBUG.add_message("Received gigyaPersonID")
+            self.DEBUG.add_message("Received gigyaDataCenter")
 
         else:
-            print("2. no action required")
+            pass
+            # print("2. no action required")
 
     # 3. fetch JWT data from gigya
     # renew gigyaJWTToken once a day
@@ -220,7 +220,7 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
             api_result = self.get_https_response(self.g_gigyaURL, path)
             status_code = api_result["code"]
             api_result = api_result["data"]
-            print("3. status code: " + str(status_code))
+            # print("3. status code: " + str(status_code))
             api_result = json.loads(api_result)
 
             gigya_jwt_token = api_result["id_token"]
@@ -230,10 +230,11 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
             self.g_keychain['lastJWTCall'] = call_date
 
         else:
-            print("3. no action required")
+            pass
+            # print("3. no action required")
 
-        self.DEBUG.set_value("14106 gigyaJWTToken", self.g_keychain['gigyaJWTToken'])
-        self.DEBUG.set_value("14106 lastJWTCall", self.g_keychain['lastJWTCall'])
+        self.DEBUG.add_message("Received gigyaJWTToken")
+        self.DEBUG.add_message("Received lastJWTCall")
 
     # 4. fetch data from kamereon (person)
     # if not in Keychain (we try to avoid quota limits here)
@@ -264,16 +265,16 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
             status_code = api_result["code"]
             api_result = api_result["data"]
             api_result = json.loads(api_result)
-            print("4. status code: " + str(status_code))
+            # print("4. status code: " + str(status_code))
 
             if api_result["type"] == "FUNCTIONAL":
-                print(api_result["messages"][0][
+                self.DEBUG.add_message(api_result["messages"][0][
                           "message"] + " – Login derzeit nicht möglich. Später nochmal versuchen.")
 
             else:
                 account_id = api_result["accounts"][0]["accountId"]
                 self.g_keychain['account_id'] = account_id
-                self.DEBUG.set_value("14106 account_id", account_id)
+                self.DEBUG.add_message("Received account_id")
 
     # 5. fetch data from kamereon (all vehicles data)
     # we need this only once to get the picture of the car and the VIN!
@@ -289,13 +290,13 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
             VIN = self.g_keychain['VIN']
 
         if "account_id" not in self.g_keychain:
-            print("fetchVehicleData: account_id missing")
+            # print("fetchVehicleData: account_id missing")
             return
 
         account_id = self.g_keychain['account_id']
 
         if account_id == "":
-            print("fetchVehicleData: account_id empty")
+            # print("fetchVehicleData: account_id empty")
             return
 
         if car_picture == "" or VIN == "":
@@ -312,15 +313,15 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
                 # set carPicture
                 car_picture = api_result["vehicleLinks"][0]["vehicleDetails"]["assets"][0]["renditions"][0]["url"]
                 self.g_keychain['carPicture'] = car_picture
-                self.DEBUG.set_value("14106 carPicture", car_picture)
+                self.DEBUG.add_message("Received carPicture")
 
                 # set VIN
                 VIN = api_result["vehicleLinks"][0]["vin"]
                 self.g_keychain['VIN'] = VIN
-                self.DEBUG.set_value("14106 VIN", VIN)
+                self.DEBUG.add_message("Received VIN")
 
             except Exception as e:
-                print("Exception in vehicleLinks")
+                self.DEBUG.add_message("Exception in vehicleLinks")
 
         # NOW WE CAN READ AND SET EVERYTHING INTO AN OBJECT:
 
@@ -329,7 +330,7 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
         # real configurator picture of the vehicle
         # old call: let carPicture = allVehicleData.vehicleLinks[0].vehicleDetails.assets[0].renditions[0].url // renditions[0] = large // renditions[1] = small image
         all_results["carPicture"] = car_picture
-        self.DEBUG.set_value("14106 carPicture: ", car_picture)
+        self.DEBUG.add_message("Received carPicture")
         self._set_output_value(self.PIN_O_S_CARPICTURE, car_picture)
 
         # batteryStatus
@@ -352,7 +353,7 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
             self._set_output_value(self.PIN_O_N_BATTERYTEMPERATURE,
                                    int(battery_status["data"]["attributes"]["batteryTemperature"]))
         except Exception as e:
-            self.DEBUG.add_message("14106 batteryStatus: " + str(e))
+            self.DEBUG.add_message("Error batteryStatus: " + str(e))
 
         # cockpitStatus
         # version: 2
@@ -363,7 +364,7 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
             all_results["cockpitStatus"] = cockpit_status["data"]
             self._set_output_value(self.PIN_O_N_TOTALMILEAGE, int(cockpit_status["data"]["attributes"]["totalMileage"]))
         except Exception as e:
-            self.DEBUG.add_message("14106 cockpitStatus: " + str(e))
+            self.DEBUG.add_message("Error cockpitStatus: " + str(e))
 
         # locationStatus
         # version: 1
@@ -380,7 +381,7 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
             self._set_output_value(self.PIN_O_S_LASTUPDATETIME,
                                    str(location_status["data"]["attributes"]["lastUpdateTime"]))
         except Exception as e:
-            self.DEBUG.add_message("14106 locationStatus: " + str(e))
+            self.DEBUG.add_message("Error locationStatus: " + str(e))
 
         # chargeSchedule
         # note: unused at the moment!
@@ -417,7 +418,7 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
         self.get_access_data()
         action = {}
 
-        print("requesting " + query_action)
+        # print("requesting " + query_action)
 
         if ((self.g_VIN == 0) or
                 ("account_id" not in self.g_keychain) or
@@ -442,7 +443,7 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
             action = self.post_status('charging-start', attr_data, 1, self.g_kamareonURL, account_id, VIN, gigya_jwt_token,
                                       self.g_kamareonAPI)
         else:
-            print("Query command not known")
+            self.DEBUG.add_message("Query command '" + str(query_action) + "' not known")
 
         if action["code"] == 200:
             self.DEBUG.add_message("14106 hvacStatus: " + query_action + " OK")
@@ -460,8 +461,7 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
             self.get_access_data()
             self.fetch_vehicle_data()
         except Exception as e:
-            print("14106 on_timeout: " + str(e))
-
+            self.DEBUG.add_message("14106 on_timeout: " + str(e))
 
         interval = int(self._get_input_value(self.PIN_I_N_INTERVAL))
         if interval > 0:

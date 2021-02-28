@@ -436,6 +436,9 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
         api_result = self.get_https_response(kamareonURL, path, headers, jsondata)
         return api_result
 
+    def reset_ac_feedback(self):
+        self._set_output_value(self.PIN_O_N_ACFEEDBACK, 0)
+
     def query(self, query_action):
         self.clear_keychain()
         self.get_access_data()
@@ -457,6 +460,10 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
             attr_data = '{"data":{"type":"HvacStart","attributes":{"action":"start","targetTemperature":"21"}}}'
             action = self.post_status('hvac-start', attr_data, 1, self.g_kamareonURL, account_id, VIN, gigya_jwt_token,
                                       self.g_kamareonAPI)
+            if action["code"] == 200:
+                self._set_output_value(self.PIN_O_N_ACFEEDBACK, 1)
+                threading.Timer(300, self.reset_ac_feedback).start()
+
         elif query_action == "stop_ac":
             attr_data = '{"data":{"type":"HvacStart","attributes":{"action":"cancel"}}}'
             action = self.post_status('hvac-start', attr_data, 1, self.g_kamareonURL, account_id, VIN, gigya_jwt_token,

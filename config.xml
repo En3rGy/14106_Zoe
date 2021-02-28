@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
     <modules>
-        <module category="Datenaustausch" context="14106_Zoe" id="14106" name="Zoe (14106)" version="0.6">
+        <module category="Datenaustausch" context="14106_Zoe" id="14106" name="Zoe (14106)" version="0.7">
             <inputs>
             	<input type="string" const_name="s_user" init_value="">Benutzername</input>
             	<input type="string" const_name="s_pw" init_value="">Passwort</input>
@@ -24,7 +24,7 @@
 				<output type="number" const_name="n_gpsLatitude" init_value="0">Lat</output>
 				<output type="number" const_name="n_gpsLongitude" init_value="0">Lon</output>
 				<output type="string" const_name="s_LastUpdateTime" init_value="">Positionszeit</output>
-				<output type="number" const_name="n_acfeedback" init_value="0">Query RM</output>
+				<output type="number" const_name="n_acfeedback" init_value="0">Klimatisierung RM</output>
             </outputs>               
 			<remanent_variables>
             </remanent_variables>

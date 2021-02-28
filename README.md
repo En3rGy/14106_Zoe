@@ -31,6 +31,7 @@ Die .hslz Datei mit dem Gira Experte importieren. Das Logikmodul ist dann in der
 | Lat | 0 | Letzte gemeldete N-Position des Fahrzeugs |
 | Lon | 0 | Letzte gemeldete E-Position des Fahrzeugs |
 | Positionszeit |  | Zeitstempel, für den zuletzt die Fahrzeugposition empfangen wurde. |
+| Klimatisierung RM | 0 | Für 5 min 1 bei erfolgreichem Start der Klimatisierung, sonst 0 |
 
 ## Sonstiges
 
@@ -40,6 +41,10 @@ Die .hslz Datei mit dem Gira Experte importieren. Das Logikmodul ist dann in der
 
 ### Change Log
 
+- v0.7
+    - Improvement: 5min Timer für RM Klimatisierung
+	- Improvement: Ausgang *Query RM* zu *Klimatisierungs RM* umbenannt
+	- Improvement: Doku um fehlenden Ausgamg *Klimatisierungs RM* ergänzt
 - v0.6
     - Fix: Aktualisierte Einwahldaten
 - v0.5
@@ -80,7 +85,9 @@ Der Code des Bausteins befindet sich in der hslz Datei oder auf [github](https:/
 
 ## Software Design Description
 
--
+Abgeleitet / Inspiriert von [zoe-widget.js](https://gist.github.com/mountbatt/772e4512089802a2aa2622058dd1ded7):
+
+Die Zugangsdaten zur Anmeldung bei renault werden in einer *keychain* gehalten. Die Zugangsdaten werden zum Wechsel jeder vollen Stunde verworfen und neue erzeugt / angefordert.
 
 ## Validierung und Verifikation
 

@@ -31,7 +31,7 @@ Die .hslz Datei mit dem Gira Experte importieren. Das Logikmodul ist dann in der
 | Lat | 0 | Letzte gemeldete N-Position des Fahrzeugs |
 | Lon | 0 | Letzte gemeldete E-Position des Fahrzeugs |
 | Positionszeit |  | Zeitstempel, für den zuletzt die Fahrzeugposition empfangen wurde. |
-| Klimatisierung RM | 0 | Für 5 min 1 bei erfolgreichem Start der Klimatisierung, sonst 0 |
+| Klimatisierung RM | 0 | 1 - wenn Anfrage gesendet aber Antwort ausstehend<br/> 2 - für 5 min bei erfolgreichem Start der Klimatisierung<br/> 0 - sonst |
 
 ## Sonstiges
 
@@ -41,6 +41,9 @@ Die .hslz Datei mit dem Gira Experte importieren. Das Logikmodul ist dann in der
 
 ### Change Log
 
+- v0.8
+    - Improvement: RM Vorklimatisierung nach Ampelschema
+	- Improvement: Code Refactoring
 - v0.7
     - Improvement: 5min Timer für RM Klimatisierung
 	- Improvement: Ausgang *Query RM* zu *Klimatisierungs RM* umbenannt

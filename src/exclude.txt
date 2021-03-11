@@ -1,0 +1,4 @@
+.txt
+test_zoe.py
+.project
+.pydevproject

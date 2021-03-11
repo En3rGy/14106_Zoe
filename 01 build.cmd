@@ -18,7 +18,7 @@ type .\README.md | C:\Python27\python -m markdown -x tables >> .\release\log1410
 cd ..\..
 C:\Python27\python generator.pyc "14106_Zoe" UTF-8
 
-xcopy .\projects\14106_Zoe\src .\projects\14106_Zoe\release
+xcopy .\projects\14106_Zoe\src .\projects\14106_Zoe\release /exclude:.\projects\14106_Zoe\src\exclude.txt
 
 @echo Fertig.
 

@@ -1,23 +1,19 @@
 # coding: UTF-8
 
 import unittest
+import time
 
+# functional import
 import urllib
 import urllib2
 import ssl
-# import urlparse
-# import socket
-# import struct
 import threading
 from datetime import datetime
 import json
 
-import time
-
-
 #########################################################
 
-class hsl20_3:
+class hsl20_4:
     LOGGING_NONE = 0
 
     def __init__(self):
@@ -32,7 +28,7 @@ class hsl20_3:
             pass
 
         def _get_framework(self):
-            f = hsl20_3.Framework()
+            f = hsl20_4.Framework()
             return f
 
         def _get_logger(self, a, b):
@@ -62,7 +58,7 @@ class hsl20_3:
             pass
 
         def create_debug_section(self):
-            d = hsl20_3.DebugHelper()
+            d = hsl20_4.DebugHelper()
             return d
 
     class DebugHelper:
@@ -75,6 +71,9 @@ class hsl20_3:
         def add_message(self, msg):
             print("Debug Msg\t" + str(msg))
 
+        def add_exception(self, msg):
+            print("EXCEPTION Msg\t" + str(msg))
+
 #########################################################
 
 ##!!!!##################################################################################################
@@ -82,40 +81,36 @@ class hsl20_3:
 ########################################################################################################
 ##** Code created by generator - DO NOT CHANGE! **##
 
-class Zoe_14106_14106(hsl20_3.BaseModule):
+class Zoe_14106_14106(hsl20_4.BaseModule):
 
     def __init__(self, homeserver_context):
-        hsl20_3.BaseModule.__init__(self, homeserver_context, "14106_Zoe")
+        hsl20_4.BaseModule.__init__(self, homeserver_context, "14106_Zoe")
         self.FRAMEWORK = self._get_framework()
-        self.LOGGER = self._get_logger(hsl20_3.LOGGING_NONE, ())
-        self.PIN_I_S_USER = 1
-        self.PIN_I_S_PW = 2
-        self.PIN_I_S_VIN = 3
-        self.PIN_I_N_INTERVAL = 4
-        self.PIN_I_N_TRIGGER = 5
-        self.PIN_I_N_AC = 6
-        self.PIN_I_N_ACTEMP = 7
-        self.PIN_I_N_CHARGE = 8
-        self.PIN_O_S_CARPICTURE = 1
-        self.PIN_O_N_BATTERYLEVEL = 2
-        self.PIN_O_N_BATTERYAUTONOMY = 3
-        self.PIN_O_N_BATTERYAVAILABLEENERGY = 4
-        self.PIN_O_N_BATTERYTEMPERATURE = 5
-        self.PIN_O_N_PLUGSTATUS = 6
-        self.PIN_O_N_CHARGESTATUS = 7
-        self.PIN_O_N_TOTALMILEAGE = 8
-        self.PIN_O_N_GPSLATITUDE = 9
-        self.PIN_O_N_GPSLONGITUDE = 10
-        self.PIN_O_S_LASTUPDATETIME = 11
-        self.PIN_O_N_ACFEEDBACK = 12
-        self.FRAMEWORK._run_in_context_thread(self.on_init)
+        self.LOGGER = self._get_logger(hsl20_4.LOGGING_NONE,())
+        self.PIN_I_S_USER=1
+        self.PIN_I_S_PW=2
+        self.PIN_I_S_VIN=3
+        self.PIN_I_N_ZOEMODEL=4
+        self.PIN_I_N_INTERVAL=5
+        self.PIN_I_N_TRIGGER=6
+        self.PIN_I_N_AC=7
+        self.PIN_I_N_CHARGE=8
+        self.PIN_O_S_CARPICTURE=1
+        self.PIN_O_N_BATTERYLEVEL=2
+        self.PIN_O_N_BATTERYAUTONOMY=3
+        self.PIN_O_N_BATTERYAVAILABLEENERGY=4
+        self.PIN_O_N_BATTERYTEMPERATURE=5
+        self.PIN_O_N_PLUGSTATUS=6
+        self.PIN_O_N_CHARGESTATUS=7
+        self.PIN_O_N_TOTALMILEAGE=8
+        self.PIN_O_N_GPSLATITUDE=9
+        self.PIN_O_N_GPSLONGITUDE=10
+        self.PIN_O_S_LASTUPDATETIME=11
+        self.PIN_O_N_ACFEEDBACK=12
 
     ########################################################################################################
     #### Own written code can be placed after this commentblock . Do not change or delete commentblock! ####
     ###################################################################################################!!!##
-
-    # set your ZOE Model (Phase 1 or 2)
-    g_ZOE_Phase = "2"  # "1" or "2"
 
     # do not edit
     g_kamareonURL = "https://api-wired-prod-1-euw1.wrd-aws.com"  # type: str
@@ -180,7 +175,7 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
             try:
                 api_result = json.loads(api_result)
             except Exception as e:
-                self.DEBUG.add_message("Error get_status: " + str(e))
+                self.DEBUG.add_exception("Error get_status: " + str(e))
 
             return api_result
         else:
@@ -203,7 +198,7 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
             api_result = json.loads(api_result)
 
         except Exception as e:
-            self.DEBUG.add_message("Error get_gigya_cookie_value http response: " + str(e.message))
+            self.DEBUG.add_exception("Error get_gigya_cookie_value http response: " + str(e.message))
             status_code = 999
             api_result = {}
 
@@ -228,7 +223,7 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
                 self.DEBUG.add_message("Received gigyaDataCenter")
 
             except Exception as e:
-                self.DEBUG.add_message("Error getGigyaCookieValue: " + str(e.message))
+                self.DEBUG.add_exception("Error getGigyaCookieValue: " + str(e.message))
 
     # 2. fetch user data from gigya
     def get_gigya_user_date(self):
@@ -389,7 +384,7 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
                 self.DEBUG.add_message("Received vin")
 
             except Exception as e:
-                self.DEBUG.add_message("Exception in vehicleLinks")
+                self.DEBUG.add_exception("Exception in vehicleLinks")
                 self.g_error = True
 
         # NOW WE CAN READ AND SET EVERYTHING INTO AN OBJECT:
@@ -422,7 +417,7 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
             self._set_output_value(self.PIN_O_N_BATTERYTEMPERATURE,
                                    int(battery_status["data"]["attributes"]["batteryTemperature"]))
         except Exception as e:
-            self.DEBUG.add_message("Error batteryStatus: " + str(e))
+            self.DEBUG.add_exception("Error batteryStatus: " + str(e))
             self.g_error = True
 
         # cockpitStatus
@@ -434,7 +429,7 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
             all_results["cockpitStatus"] = cockpit_status["data"]
             self._set_output_value(self.PIN_O_N_TOTALMILEAGE, int(cockpit_status["data"]["attributes"]["totalMileage"]))
         except Exception as e:
-            self.DEBUG.add_message("Error cockpitStatus: " + str(e))
+            self.DEBUG.add_exception("Error cockpitStatus: " + str(e))
             self.g_error = True
 
         # locationStatus
@@ -452,7 +447,7 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
             self._set_output_value(self.PIN_O_S_LASTUPDATETIME,
                                    str(location_status["data"]["attributes"]["lastUpdateTime"]))
         except Exception as e:
-            self.DEBUG.add_message("Error locationStatus: " + str(e))
+            self.DEBUG.add_exception("Error locationStatus: " + str(e))
             self.g_error = True
 
         # chargeSchedule
@@ -538,6 +533,7 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
         self.fetch_kamereon_data()
 
     def on_timeout(self):
+        self.DEBUG.add_message("Requesting vehicle data.")
         try:
             if not self.check_time():
                 self.get_access_data()
@@ -545,14 +541,25 @@ class Zoe_14106_14106(hsl20_3.BaseModule):
                 print("Access data still valid! Skipping get_access_data().")
             self.fetch_vehicle_data()
         except Exception as e:
-            self.DEBUG.add_message("Error on_timeout: " + str(e))
+            self.DEBUG.add_exception("Error on_timeout: " + str(e))
 
         interval = int(self._get_input_value(self.PIN_I_N_INTERVAL))
         if interval > 0:
-            t = threading.Timer(interval, self.on_timeout).start()
+            threading.Timer(interval, self.on_timeout).start()
 
     def on_init(self):
         self.DEBUG = self.FRAMEWORK.create_debug_section()
+
+        # do not edit
+        self.g_kamareonURL = "https://api-wired-prod-1-euw1.wrd-aws.com"  # type: str
+        self.g_kamareonAPI = "Ae9FDWugRxZQAGm3Sxgk7uJn6Q4CGEA2"  # type: str
+        self.g_gigyaURL = "https://accounts.eu1.gigya.com"  # type: str
+        self.g_gigyaAPI = "3_7PLksOyBRkHv126x5WhHb-5pqC1qFR8pQjxSeLB6nhAnPERTUlwnYoznHSxwX668"  # type: str
+        # austria: "3__B4KghyeUb0GlpU62ZXKrjSfb7CPzwBS368wioftJUL5qXE0Z_sSy0rX69klXuHy"
+
+        self.g_keychain = {}
+
+        self.g_error = False
 
         interval = int(self._get_input_value(self.PIN_I_N_INTERVAL))
         if interval > 0:
@@ -610,6 +617,11 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertNotEqual(0, len(self.tst.g_keychain), "a")
         self.tst.clear_keychain()
         self.assertEqual(0, len(self.tst.g_keychain), "b")
+
+    def test_no_route(self):
+        print("### test_no_route")
+        self.tst.g_gigyaURL = "192.168.1.100"
+        self.tst.on_input_value(self.tst.PIN_I_N_TRIGGER, 1)
 
 if __name__ == '__main__':
     unittest.main()

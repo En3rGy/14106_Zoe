@@ -6,10 +6,10 @@
             	<input type="string" const_name="s_user" init_value="">Benutzername</input>
             	<input type="string" const_name="s_pw" init_value="">Passwort</input>
 				<input type="string" const_name="s_vin" init_value="">VIN</input>
+				<input type="number" const_name="n_zoemodel" init_value="2">Zoe Modell</input>
 				<input type="number" const_name="n_interval" init_value="0">Intervall [s]</input>
 				<input type="number" const_name="n_trigger" init_value="0">Trigger</input>
 				<input type="number" const_name="n_ac" init_value="0">Klimatisierung E/A</input>
-				<input type="number" const_name="n_actemp" init_value="21">Temp. Klima [°C]</input>
 				<input type="number" const_name="n_charge" init_value="0">Laden Start</input>
             </inputs>
             <outputs>
@@ -23,7 +23,7 @@
 				<output type="number" const_name="n_totalMileage" init_value="0">Gesamt km</output>
 				<output type="number" const_name="n_gpsLatitude" init_value="0">Lat</output>
 				<output type="number" const_name="n_gpsLongitude" init_value="0">Lon</output>
-				<output type="string" const_name="s_LastUpdateTime" init_value="">Positionszeit</output>
+				<output type="string" const_name="s_LastUpdateTime" init_value="">Zeit letzte Pos.</output>
 				<output type="number" const_name="n_acfeedback" init_value="0">Klimatisierung RM</output>
             </outputs>               
 			<remanent_variables>

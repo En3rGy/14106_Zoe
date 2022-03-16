@@ -21,6 +21,7 @@ Die .hslz Datei mit dem Gira Experte importieren. Das Logikmodul ist dann in der
 | 8 | Laden Start | 0 | Eine 1 startet den Ladevorgang. |
 
 ## Ausgänge
+Alle Ausgänge sind Send-by-Change ausgeführt.
 
 | Nr. | Ausgang | Initwert | Beschreibung |
 | --- | --- | --- | --- |
@@ -45,6 +46,11 @@ Die .hslz Datei mit dem Gira Experte importieren. Das Logikmodul ist dann in der
 
 ### Change Log
 
+- v0.9
+    - Impr.: Unit test detects broken kemeron API key
+	- Bug: Fixed wring Kameron API key March 2022
+	- Impr: All outputs SBC
+	- Impr: Internal variable handling
 - v0.8
     - Improvement: RM Vorklimatisierung nach Ampelschema
 	- Improvement: Code Refactoring

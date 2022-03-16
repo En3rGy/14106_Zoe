@@ -112,16 +112,18 @@ class Zoe_14106_14106(hsl20_4.BaseModule):
     #### Own written code can be placed after this commentblock . Do not change or delete commentblock! ####
     ###################################################################################################!!!##
 
-    # do not edit
-    g_kamareonURL = "https://api-wired-prod-1-euw1.wrd-aws.com"  # type: str
-    g_kamareonAPI = "Ae9FDWugRxZQAGm3Sxgk7uJn6Q4CGEA2"  # type: str
-    g_gigyaURL = "https://accounts.eu1.gigya.com"  # type: str
-    g_gigyaAPI = "3_7PLksOyBRkHv126x5WhHb-5pqC1qFR8pQjxSeLB6nhAnPERTUlwnYoznHSxwX668"  # type: str
-    # austria: "3__B4KghyeUb0GlpU62ZXKrjSfb7CPzwBS368wioftJUL5qXE0Z_sSy0rX69klXuHy"
-
     g_keychain = {}
 
     g_error = False
+
+    def set_output_value_sbc(self, pin, val):
+        if pin in self.g_out_sbc:
+            if self.g_out_sbc[pin] == val:
+                print ("# SBC: pin " + str(pin) + " <- data not send / " + str(val).decode("utf-8"))
+                return
+
+        self._set_output_value(pin, val)
+        self.g_out_sbc[pin] = val
 
     def clear_keychain(self):
         self.g_keychain = {}
@@ -392,7 +394,7 @@ class Zoe_14106_14106(hsl20_4.BaseModule):
         all_results = {"carPicture": car_picture}
 
         # real configurator picture of the vehicle
-        self._set_output_value(self.PIN_O_S_CARPICTURE, car_picture)
+        self.set_output_value_sbc(self.PIN_O_S_CARPICTURE, car_picture)
 
         # batteryStatus
         # version: 2
@@ -406,15 +408,15 @@ class Zoe_14106_14106(hsl20_4.BaseModule):
             battery_status = self.get_status('battery-status', 2, self.g_kamareonURL, account_id, vin, gigya_jwt_token,
                                              self.g_kamareonAPI)
             all_results["batteryStatus"] = battery_status["data"]
-            self._set_output_value(self.PIN_O_N_BATTERYLEVEL, int(battery_status["data"]["attributes"]["batteryLevel"]))
-            self._set_output_value(self.PIN_O_N_PLUGSTATUS, int(battery_status["data"]["attributes"]["plugStatus"]))
-            self._set_output_value(self.PIN_O_N_CHARGESTATUS,
+            self.set_output_value_sbc(self.PIN_O_N_BATTERYLEVEL, int(battery_status["data"]["attributes"]["batteryLevel"]))
+            self.set_output_value_sbc(self.PIN_O_N_PLUGSTATUS, int(battery_status["data"]["attributes"]["plugStatus"]))
+            self.set_output_value_sbc(self.PIN_O_N_CHARGESTATUS,
                                    int(battery_status["data"]["attributes"]["chargingStatus"]))
-            self._set_output_value(self.PIN_O_N_BATTERYAUTONOMY,
+            self.set_output_value_sbc(self.PIN_O_N_BATTERYAUTONOMY,
                                    int(battery_status["data"]["attributes"]["batteryAutonomy"]))
-            self._set_output_value(self.PIN_O_N_BATTERYAVAILABLEENERGY,
+            self.set_output_value_sbc(self.PIN_O_N_BATTERYAVAILABLEENERGY,
                                    int(battery_status["data"]["attributes"]["batteryAvailableEnergy"]))
-            self._set_output_value(self.PIN_O_N_BATTERYTEMPERATURE,
+            self.set_output_value_sbc(self.PIN_O_N_BATTERYTEMPERATURE,
                                    int(battery_status["data"]["attributes"]["batteryTemperature"]))
         except Exception as e:
             self.DEBUG.add_exception("Error batteryStatus: " + str(e))
@@ -427,7 +429,7 @@ class Zoe_14106_14106(hsl20_4.BaseModule):
             cockpit_status = self.get_status('cockpit', 2, self.g_kamareonURL, account_id, vin, gigya_jwt_token,
                                              self.g_kamareonAPI)
             all_results["cockpitStatus"] = cockpit_status["data"]
-            self._set_output_value(self.PIN_O_N_TOTALMILEAGE, int(cockpit_status["data"]["attributes"]["totalMileage"]))
+            self.set_output_value_sbc(self.PIN_O_N_TOTALMILEAGE, int(cockpit_status["data"]["attributes"]["totalMileage"]))
         except Exception as e:
             self.DEBUG.add_exception("Error cockpitStatus: " + str(e))
             self.g_error = True
@@ -441,10 +443,10 @@ class Zoe_14106_14106(hsl20_4.BaseModule):
             location_status = self.get_status('location', 1, self.g_kamareonURL, account_id, vin, gigya_jwt_token,
                                               self.g_kamareonAPI)
             all_results["locationStatus"] = location_status["data"]
-            self._set_output_value(self.PIN_O_N_GPSLATITUDE, int(location_status["data"]["attributes"]["gpsLatitude"]))
-            self._set_output_value(self.PIN_O_N_GPSLONGITUDE,
+            self.set_output_value_sbc(self.PIN_O_N_GPSLATITUDE, int(location_status["data"]["attributes"]["gpsLatitude"]))
+            self.set_output_value_sbc(self.PIN_O_N_GPSLONGITUDE,
                                    int(location_status["data"]["attributes"]["gpsLongitude"]))
-            self._set_output_value(self.PIN_O_S_LASTUPDATETIME,
+            self.set_output_value_sbc(self.PIN_O_S_LASTUPDATETIME,
                                    str(location_status["data"]["attributes"]["lastUpdateTime"]))
         except Exception as e:
             self.DEBUG.add_exception("Error locationStatus: " + str(e))
@@ -482,7 +484,7 @@ class Zoe_14106_14106(hsl20_4.BaseModule):
         return api_result
 
     def reset_ac_feedback(self):
-        self._set_output_value(self.PIN_O_N_ACFEEDBACK, 0)
+        self.set_output_value_sbc(self.PIN_O_N_ACFEEDBACK, 0)
 
     def query(self, query_action):
         self.clear_keychain()
@@ -503,11 +505,11 @@ class Zoe_14106_14106(hsl20_4.BaseModule):
 
         if query_action == "start_ac":
             attr_data = '{"data":{"type":"HvacStart","attributes":{"action":"start","targetTemperature":"21"}}}'
-            self._set_output_value(self.PIN_O_N_ACFEEDBACK, 1)
+            self.set_output_value_sbc(self.PIN_O_N_ACFEEDBACK, 1)
             action = self.post_status('hvac-start', attr_data, 1, self.g_kamareonURL, account_id, vin, gigya_jwt_token,
                                       self.g_kamareonAPI)
             if action["code"] == 200:
-                self._set_output_value(self.PIN_O_N_ACFEEDBACK, 2)
+                self.set_output_value_sbc(self.PIN_O_N_ACFEEDBACK, 2)
                 threading.Timer(300, self.reset_ac_feedback).start()
 
         elif query_action == "stop_ac":
@@ -542,6 +544,8 @@ class Zoe_14106_14106(hsl20_4.BaseModule):
             self.fetch_vehicle_data()
         except Exception as e:
             self.DEBUG.add_exception("Error on_timeout: " + str(e))
+            self.g_error = True
+
 
         interval = int(self._get_input_value(self.PIN_I_N_INTERVAL))
         if interval > 0:
@@ -552,14 +556,13 @@ class Zoe_14106_14106(hsl20_4.BaseModule):
 
         # do not edit
         self.g_kamareonURL = "https://api-wired-prod-1-euw1.wrd-aws.com"  # type: str
-        self.g_kamareonAPI = "Ae9FDWugRxZQAGm3Sxgk7uJn6Q4CGEA2"  # type: str
+        self.g_kamareonAPI = "VAX7XYKGfa92yMvXculCkEFyfZbuM7Ss"  # type: str
         self.g_gigyaURL = "https://accounts.eu1.gigya.com"  # type: str
         self.g_gigyaAPI = "3_7PLksOyBRkHv126x5WhHb-5pqC1qFR8pQjxSeLB6nhAnPERTUlwnYoznHSxwX668"  # type: str
-        # austria: "3__B4KghyeUb0GlpU62ZXKrjSfb7CPzwBS368wioftJUL5qXE0Z_sSy0rX69klXuHy"
-
+        # self.g_austria: "3__B4KghyeUb0GlpU62ZXKrjSfb7CPzwBS368wioftJUL5qXE0Z_sSy0rX69klXuHy"
         self.g_keychain = {}
-
         self.g_error = False
+        self.g_out_sbc = {}
 
         interval = int(self._get_input_value(self.PIN_I_N_INTERVAL))
         if interval > 0:
@@ -579,6 +582,7 @@ class Zoe_14106_14106(hsl20_4.BaseModule):
         elif index == self.PIN_I_N_INTERVAL:
             if value > 0:
                 self.on_timeout()
+
 
 
 ################################################################################

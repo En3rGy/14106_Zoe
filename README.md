@@ -46,9 +46,11 @@ Alle Ausgänge sind Send-by-Change ausgeführt.
 
 ### Change Log
 
+- v01.00
+    - Impr.: Fixed wrong Kameron API key May 2023
 - v0.9
     - Impr.: Unit test detects broken kemeron API key
-	- Bug: Fixed wring Kameron API key March 2022
+	- Bug: Fixed wrong Kameron API key March 2022
 	- Impr: All outputs SBC
 	- Impr: Internal variable handling
 - v0.8

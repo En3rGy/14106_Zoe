@@ -488,7 +488,7 @@ class Zoe_14106_14106(hsl20_4.BaseModule):
 
         # do not edit
         self.g_kamareonURL = "https://api-wired-prod-1-euw1.wrd-aws.com"  # type: str
-        self.g_kamareonAPI = "VAX7XYKGfa92yMvXculCkEFyfZbuM7Ss"  # type: str
+        self.g_kamareonAPI = "YjkKtHmGfaceeuExUDKGxrLZGGvtVS0J"  # type: str
         self.g_gigyaURL = "https://accounts.eu1.gigya.com"  # type: str
         self.g_gigyaAPI = "3_7PLksOyBRkHv126x5WhHb-5pqC1qFR8pQjxSeLB6nhAnPERTUlwnYoznHSxwX668"  # type: str
         # self.g_austria: "3__B4KghyeUb0GlpU62ZXKrjSfb7CPzwBS368wioftJUL5qXE0Z_sSy0rX69klXuHy"

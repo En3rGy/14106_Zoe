@@ -23,20 +23,21 @@ Die .hslz Datei mit dem Gira Experte importieren. Das Logikmodul ist dann in der
 ## Ausgänge
 Alle Ausgänge sind Send-by-Change ausgeführt.
 
-| Nr. | Ausgang | Initwert | Beschreibung |
-| --- | --- | --- | --- |
-| 1 | Foto-URL | |URL zum Abruf eines Fotos des Fahrzeuges in der individuellen Konfiguration und Farbe. |
-| 2 | Batterie Lvl [%] | 0 | Ladezustand der Batterie in % |
-| 3 | Restreichweite [km] | 0 | Reichweite mit der aktuellen Akku-Ladung in km. |
-| 4 | Restladung [kWh] | 0 | Aktuelle Ladung der Batterie in kWh. |
-| 5 | Temperatur Batterie [°C] | 0 | Temperatur Batterie in °C |
-| 6 | Eingesteckt | 0 | 1 wenn ein Ladekabel an das Fahrzeug angeschlossen ist, 0, wenn nicht.|
-| 7 | Lädt | 0 |1 wenn das Fahrzeugt gerade lädt, 0, wenn nicht. |
-| 8 | Gesamt km | 0 | Gesamte bisherige Fahrleistung des Fahrzeugs in km |
-| 9 | Lat | 0 | Letzte gemeldete N-Position des Fahrzeugs |
-| 10 | Lon | 0 | Letzte gemeldete E-Position des Fahrzeugs |
-| 11 | Positionszeit |  | Zeitstempel, für den zuletzt die Fahrzeugposition empfangen wurde. |
-| 12 | Klimatisierung RM | 0 | 1 - wenn Anfrage gesendet aber Antwort ausstehend<br/> 2 - für 5 min bei erfolgreichem Start der Klimatisierung<br/> 0 - sonst |
+| Nr. | Ausgang                  | Initwert | Beschreibung                                                                                                                   |
+|-----|--------------------------| --- |--------------------------------------------------------------------------------------------------------------------------------|
+| 1   | Foto-URL                 | | URL zum Abruf eines Fotos des Fahrzeuges in der individuellen Konfiguration und Farbe.                                         |
+| 2   | Batterie Lvl [%]         | 0 | Ladezustand der Batterie in %                                                                                                  |
+| 3   | Restreichweite [km]      | 0 | Reichweite mit der aktuellen Akku-Ladung in km.                                                                                |
+| 4   | Restladung [kWh]         | 0 | Aktuelle Ladung der Batterie in kWh.                                                                                           |
+| 5   | Temperatur Batterie [°C] | 0 | Temperatur Batterie in °C                                                                                                      |
+| 6   | Eingesteckt              | 0 | 1 wenn ein Ladekabel an das Fahrzeug angeschlossen ist, 0, wenn nicht.                                                         |
+| 7   | Lädt                     | 0 | 1 wenn das Fahrzeugt gerade lädt, 0, wenn nicht.                                                                               |
+| 8   | Gesamt km                | 0 | Gesamte bisherige Fahrleistung des Fahrzeugs in km                                                                             |
+| 9   | Lat                      | 0 | Letzte gemeldete N-Position des Fahrzeugs                                                                                      |
+| 10  | Lon                      | 0 | Letzte gemeldete E-Position des Fahrzeugs                                                                                      |
+| 11  | Positionszeit            |  | Zeitstempel, für den zuletzt die Fahrzeugposition empfangen wurde.                                                             |
+| 12  | Klimatisierung RM        | 0 | 1 - wenn Anfrage gesendet aber Antwort ausstehend<br/> 2 - für 5 min bei erfolgreichem Start der Klimatisierung<br/> 0 - sonst |
+| 13  | Heartbeat                | 0 | 1 - Datenabfrage erfolgreich                                                                                                   |
 
 ## Sonstiges
 

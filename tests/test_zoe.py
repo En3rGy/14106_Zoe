@@ -4,11 +4,6 @@ import unittest
 import time
 
 # functional import
-import urllib
-import urllib2
-import ssl
-import threading
-from datetime import datetime
 import json
 
 ################################
@@ -37,6 +32,36 @@ class TestSequenceFunctions(unittest.TestCase):
         self.tst.debug_input_value[self.tst.PIN_I_S_PW] = self.cred["PIN_I_S_PW"]
         self.tst.debug_input_value[self.tst.PIN_I_S_USER] = self.cred["PIN_I_S_USER"]
         self.tst.debug_input_value[self.tst.PIN_I_S_VIN] = self.cred["PIN_I_S_VIN"]
+
+    def test_get_data(self):
+        # self.tst.g_kamereon_URL = ""
+        self.tst.debug_input_value[self.tst.PIN_I_N_INTERVAL] = 3
+        self.tst.on_timeout()
+        time.sleep(15)
+        self.tst.debug_input_value[self.tst.PIN_I_N_INTERVAL] = 0
+
+    def test_get_data_new_kamereon(self):
+        self.tst.debug_input_value[self.tst.PIN_I_N_INTERVAL] = 3
+        self.tst.on_timeout()
+        self.tst.g_kamereon_URL = ""
+        self.tst.g_kamereon_API = ""
+        self.tst.g_gigyaURL = ""
+        self.tst.g_gigyaAPI = ""
+        self.tst.on_timeout()
+        time.sleep(15)
+        self.tst.debug_input_value[self.tst.PIN_I_N_INTERVAL] = 0
+
+    def test_fetch_static_data(self):
+        self.tst.g_kamereon_URL = ""
+        self.tst.g_kamereon_API = ""
+        self.tst.g_gigyaURL = ""
+        self.tst.g_gigyaAPI = ""
+        self.tst.fetch_static_data()
+
+        print(self.tst.g_kamereon_URL)
+        print(self.tst.g_kamereon_API)
+        print(self.tst.g_gigyaURL)
+        print(self.tst.g_gigyaAPI)
 
     def test_redo(self):
         print("### redo")

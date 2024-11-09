@@ -358,33 +358,38 @@ class Zoe_14106_14106(hsl20_4.BaseModule):
             battery_status = self.get_status('battery-status', 2, self.g_kamereon_URL, account_id, vin, gigya_jwt_token,
                                              self.g_kamereon_API)
             all_results["batteryStatus"] = battery_status["data"]
+            # print("# DEBUG | battery_status[\"data\"][\"attributes\"]: {}".format(battery_status["data"]["attributes"]))
             self.set_output_value_sbc(self.PIN_O_N_BATTERYLEVEL, int(battery_status["data"]["attributes"]["batteryLevel"]))
             self.set_output_value_sbc(self.PIN_O_N_PLUGSTATUS, int(battery_status["data"]["attributes"]["plugStatus"]))
             self.set_output_value_sbc(self.PIN_O_N_CHARGESTATUS,
                                    int(battery_status["data"]["attributes"]["chargingStatus"]))
             self.set_output_value_sbc(self.PIN_O_N_BATTERYAUTONOMY,
                                    int(battery_status["data"]["attributes"]["batteryAutonomy"]))
-            self.set_output_value_sbc(self.PIN_O_N_BATTERYAVAILABLEENERGY,
-                                   int(battery_status["data"]["attributes"]["batteryAvailableEnergy"]))
-            self.set_output_value_sbc(self.PIN_O_N_BATTERYTEMPERATURE,
-                                   int(battery_status["data"]["attributes"]["batteryTemperature"]))
+            if "batteryAvailableEnergy" in battery_status["data"]["attributes"]:
+                self.set_output_value_sbc(self.PIN_O_N_BATTERYAVAILABLEENERGY,
+                                       int(battery_status["data"]["attributes"]["batteryAvailableEnergy"]))
+            if "batteryTemperature" in battery_status["data"]["attributes"]:
+                self.set_output_value_sbc(self.PIN_O_N_BATTERYTEMPERATURE,
+                                       int(battery_status["data"]["attributes"]["batteryTemperature"]))
             success = True
         except Exception as e:
             self.DEBUG.add_exception("Error batteryStatus: " + str(e))
             self.g_error = True
 
+        # todo: Requesting cockpit status returns: ```cockpit_status: {"message": "you should not be there but well done for the effort"}```
         # cockpitStatus
         # version: 2
         #  totalMileage = Num (in Kilometres!)
-        try:
-            cockpit_status = self.get_status('cockpit', 2, self.g_kamereon_URL, account_id, vin, gigya_jwt_token,
-                                             self.g_kamereon_API)
-            all_results["cockpitStatus"] = cockpit_status["data"]
-            self.set_output_value_sbc(self.PIN_O_N_TOTALMILEAGE, int(cockpit_status["data"]["attributes"]["totalMileage"]))
-            success = True
-        except Exception as e:
-            self.DEBUG.add_exception("Error cockpitStatus: " + str(e))
-            self.g_error = True
+        # try:
+        #     cockpit_status = self.get_status('cockpit', 2, self.g_kamereon_URL, account_id, vin, gigya_jwt_token,
+        #                                      self.g_kamereon_API)
+        #     print("# DEBUG | cockpit_status: {}".format(cockpit_status))
+        #     all_results["cockpitStatus"] = cockpit_status["data"]
+        #     self.set_output_value_sbc(self.PIN_O_N_TOTALMILEAGE, int(cockpit_status["data"]["attributes"]["totalMileage"]))
+        #     success = True
+        # except Exception as e:
+        #     self.DEBUG.add_exception("Error cockpitStatus: " + str(e))
+        #     self.g_error = True
 
         # locationStatus
         # version: 1

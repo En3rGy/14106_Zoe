@@ -1,3 +1,4 @@
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
 # Zoe (14106)
 Logikmodul zur Kommunikation mit einer Renault Zoe für den Gira KNX Homeserver. Abgeleitet vom [zoe-widget.js](https://gist.github.com/mountbatt/772e4512089802a2aa2622058dd1ded7)
 
